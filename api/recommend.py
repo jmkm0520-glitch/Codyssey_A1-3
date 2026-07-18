@@ -206,11 +206,12 @@ class handler(BaseHTTPRequestHandler):
                 "success": False,
                 "error": {"message": str(error)}
             })
+        
         except Exception as error:
             print(f"recommend error: {error}")
             send_json(self, 500, {
                 "success": False,
                 "error": {
-                        "message": "추천을 만드는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
-        }
-    })
+                    "message": "추천을 만드는 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+                }
+            })
