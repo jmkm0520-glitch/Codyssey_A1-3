@@ -1,6 +1,6 @@
 # 오늘 뭐 먹지? 냉털 AI
 
-https://codyssey-a1-3-egmw-k2cxrcoeo-jmkm0520.vercel.app
+배포 URL: codyssey-a1-3-egmw.vercel.app
 
 냉장고 속 재료와 원하는 조리 조건을 입력하면 Gemini가 서로 다른 레시피 5개를 추천하는 반응형 웹 서비스입니다.
 
