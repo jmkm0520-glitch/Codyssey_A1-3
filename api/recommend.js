@@ -16,24 +16,20 @@ export default async function handler(req, res) {
       });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
-
+    const apiKey = process.env.OPENROUTER_API_KEY;
     if (!apiKey) {
       return res.status(500).json({
         success: false,
-        error: { message: "GEMINI_API_KEY가 설정되지 않았습니다." },
+        error: { message: "OPENROUTER_API_KEY가 설정되지 않았습니다." },
       });
     }
 
     const prompt = `
 당신은 냉장고 재료를 활용해 현실적으로 만들 수 있는 요리를 추천하는 요리 전문가입니다.
-
 사용 가능한 재료: ${ingredients.join(", ")}
 추가 조건: ${condition || "특별한 조건 없음"}
-
 서로 다른 레시피 5개를 한국어로 추천하세요.
 반드시 아래 JSON 형식만 반환하세요. 다른 텍스트는 절대 포함하지 마세요.
-
 {
   "recipes": [
     {
@@ -47,24 +43,21 @@ export default async function handler(req, res) {
     }
   ]
 }
-
 입력하지 않은 재료는 최소한으로 사용하고, 일반적인 양념은 사용 가능합니다.
 `;
 
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json" },
-        }),
-      }
-    );
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-flash-1.5",  // 원하는 모델로 변경 가능
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+      }),
+    });
 
     const data = await response.json();
 
@@ -72,14 +65,11 @@ export default async function handler(req, res) {
       console.error(data);
       return res.status(response.status).json({
         success: false,
-        error: { message: data?.error?.message || "Gemini API 요청 중 오류가 발생했습니다." },
+        error: { message: data?.error?.message || "OpenRouter API 요청 중 오류가 발생했습니다." },
       });
     }
 
-    const text =
-      data?.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text || "")
-        .join("") || "";
+    const text = data?.choices?.[0]?.message?.content || "";
 
     if (!text) {
       return res.status(500).json({
