@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "google/gemini-flash-1.5",  // 원하는 모델로 변경 가능
+        model: "openrouter/free",  // 원하는 모델로 변경 가능
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
       }),
